@@ -1,0 +1,94 @@
+rules_version = '2';
+
+// Un RSVP vive en `rsvps/{uid}`, y el id del doc es el uid de Anonymous Auth.
+// Regla de oro: solo podeis leer y escribir el doc que es tuyo.
+//
+// OJO: el lenguaje de rules es ASCII puro. Una tilde o una enye en un
+// comentario no es un warning: el emulador tira "token recognition error" y
+// el archivo de rules entero deja de compilar. Si editas esto, nada de
+// acentos.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function esDuenio(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // `merge` fuerza un setDoc completo y no pisa lo que ya esta. El cliente
+    // escribe con merge para poder editar la respuesta, asi que sin esto un
+    // update podria pisar `creadoAt` y romper la trazabilidad de los datos.
+    function esMerge() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['nombre', 'ninos', 'ninas', 'asistira', 'actualizadoAt']);
+    }
+
+    // El lenguaje de rules NO tiene control de flujo: no hay `if`, no hay
+    // loops. La unica forma de ramificar es el operador condicional, asi que
+    // los dos caminos del nombre se escriben como ternario.
+    //
+    // El nombre se exige solo cuando dice que asiste: el camino del "No"
+    // deja constancia sin obligar a escribir nada. Mismo criterio que
+    // `validarRsvp` en src/lib/firebase/rsvp.ts.
+    //
+    // `\p{Cc}` = control chars, `\p{Cf}` = format chars (zero-width, BOM,
+    // bidi overrides). Los dos se filtran porque son INVISIBLES: sin esto,
+    // "Garcia" y "Gar<ZWSP>cia" se ven iguales y cuentan como dos invitados
+    // distintos. La regla del cliente filtra los dos, y si el rules filtrara
+    // solo uno, un cliente modificado podria colar lo que la app no deja.
+    function nombreValido(asistira) {
+      let n = request.resource.data.nombre;
+      return asistira == false
+        ? (n is string && n.size() <= 0)
+        : (n is string
+            && n.size() >= 1
+            && n.size() <= 60
+            && !n.matches('.*[\\p{Cc}\\p{Cf}].*'));
+    }
+
+    function contadorValido(campo, max) {
+      let v = request.resource.data[campo];
+      return v is int && v >= 0 && v <= max;
+    }
+
+    function formaValida() {
+      let d = request.resource.data;
+      // Sin campos extra: si no, un guest podria colar PII en cualquier key.
+      return d.keys().hasOnly(['nombre', 'ninos', 'ninas', 'asistira', 'creadoAt', 'actualizadoAt'])
+        && d.keys().hasAll(['nombre', 'ninos', 'ninas', 'asistira', 'actualizadoAt'])
+        && d.asistira is bool
+        && nombreValido(d.asistira)
+        && contadorValido('ninos', 10)
+        && contadorValido('ninas', 10);
+    }
+
+    match /rsvps/{uid} {
+      // Leer solo el propio RSVP. Ojo: `formaValida()` mira
+      // `request.resource.data`, que es null en un read, asi que el read va
+      // aparte. Y nunca uses `allow write`, porque `write` incluye `delete` y
+      // aca no queremos permitir borrados.
+      allow read: if esDuenio(uid);
+
+      // Crear el propio RSVP. Un create siempre es el doc completo, asi que
+      // `creadoAt` es obligatorio: si no, un guest podria crear un RSVP sin
+      // timestamp y el "cuando respondio" quedaria indefinido.
+      allow create: if esDuenio(uid)
+        && request.resource.data.keys().hasAll([
+             'nombre', 'ninos', 'ninas', 'asistira', 'creadoAt', 'actualizadoAt'])
+        && formaValida();
+
+      // Editar el propio RSVP. Se permite `update` porque el RSVP es
+      // editable: el mismo uid vuelve y cambia su respuesta. El `diff` es lo
+      // que impide pisar `creadoAt` en el camino del update.
+      allow update: if esDuenio(uid) && formaValida() && esMerge();
+
+      // `delete` no esta permitido a proposito: preferimos que quede el
+      // registro.
+    }
+
+    // Cualquier otra coleccion: cerrada por defecto.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

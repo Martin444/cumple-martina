@@ -1,0 +1,271 @@
+/* Las fuentes se importan en src/routes/+layout.svelte (vía @fontsource), no
+   acá: importarlas en los dos lugares las descarga dos veces. */
+
+/* =========================================================================
+   TOKENS
+   Paleta inspirada en el estilo de Bluey: cielo claro, azul heeler,
+   naranja cálido, amarillo sol y acentos de menta y rosa.
+   Todos los colores y las curvas salen de acá: no hardcodear en componentes.
+   ========================================================================= */
+:root {
+	/* Paleta inspirada en Bluey: cielo claro dominante, azul heeler,
+	   naranja cálido como acento, amarillo sol y toques de menta y rosa. */
+	--crema: #e6f4ff;
+	--crema-2: #d9efff;
+	--tinta: #1e3a5f;
+	--tinta-suave: #4a6fa5;
+	--coral: #ff7a45;
+	--coral-oscuro: #e85d29;
+	--amarillo: #ffd93d;
+	--menta: #7ed321;
+	--menta-oscuro: #5ba816;
+	--cielo: #4fb8e8;
+	--rosa: #ff6b9d;
+
+	/* Alias con nombres del universo Bluey. */
+	--bluey: #4fb8e8;
+	--bluey-oscuro: #2a8fc4;
+	--naranja: #ff7a45;
+	--naranja-oscuro: #e85d29;
+
+	/*
+		El fondo de la página pasó a ser un degradado de malla con olas encima
+		(`components/Fondo.svelte`). Estos tres tokens son los que usan esas
+		olas, y `--fondo-base` es el color contra el que se ve el resto.
+
+		Van del más claro al más saturado en este orden a propósito: la ola
+		lejana es la más clara porque es la que está más atrás. Si se invirtiera
+		el orden, el fondo se lee al revés.
+	*/
+	--fondo-base: #eaf6ff;
+	--agua: #cfe9ff;
+	--agua-alta: #a9d0fb;
+
+	/*
+		Fondo de las tarjetas. Antes era `--crema`, que es opaco: con el fondo
+		nuevo, una tarjeta opaca se lee como un parche de color pegado sobre las
+		olas, y es el error que hace que un deck con fondo animado se vea
+		"armado". Translúcida, las olas se ven a través y las tarjetas se leen
+		como vidrio, que es lo que se busca.
+	*/
+	--carta: rgba(255, 255, 255, 0.78);
+	--carta-fuerte: rgba(255, 255, 255, 0.92);
+
+	--borde: 4px solid var(--tinta);
+	--radio: 32px;
+	--radio-chico: 20px;
+
+	--sombra: 0 7px 0 rgba(30, 58, 95, 0.18);
+	--sombra-hover: 0 12px 0 rgba(30, 58, 95, 0.24);
+
+	--ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-wiggle: cubic-bezier(0.45, 0, 0.55, 1);
+
+	--ancho: 68rem;
+
+	/*
+		Alto reservado para la barra de navegación del deck. `Seccion.svelte` lo
+		usa de padding-block-end para que el último elemento de cada paso no
+		quede debajo de la barra. Es un token y no un valor repetido porque
+		ajustar la barra significa cambiar UN número, no dos.
+	*/
+	--nav-alto: 4.5rem;
+}
+
+/* =========================================================================
+   BASE
+
+   El estado por defecto de esta página es CONTENIDO VISIBLE, SIN ANIMACIÓN.
+   Es lo que ve un visitante con `prefers-reduced-motion` y también lo que
+   vería alguien cuyo JS no llegara a correr.
+
+   La regla del proyecto sale de acá: nunca arrancar una animación poniéndole
+   `opacity: 0` al elemento desde el CSS y esperando a que el JS lo revierta.
+   Si el JS no corre, no revierte, y lo que queda es una pantalla en blanco.
+
+   La entrada de los pasos cumple la regla porque usa `gsap.from()`: el estado
+   final es el natural del CSS y GSAP devuelve el elemento a ese estado al
+   terminar. Si GSAP fallara, el paso se ve igual. Antes la página animaba con
+   scroll y lo tenía resuelto al revés (el JS ponía el estado final), y por eso
+   hacía falta todo el apparatus de `@supports` + la clase `.js-reveal`.
+   ========================================================================= */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	/*
+		El deck ocupa la pantalla completa: ni el html ni el body scrollean. El
+		scroll vive adentro de cada paso (`.paso` en routes/+page.svelte).
+
+		Esto NO es scroll-jacking. Secuestrar el scroll es interceptar el gesto
+		del usuario y falsearlo; acá directamente no hay scroll de página que
+		interceptar, hay un deck de N pantallas, que es otra cosa. Lo que sí
+		importa es que el scroll vertical DENTRO de un paso quede intacto: un
+		form más alto que la pantalla scrollea normal.
+	*/
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	background: var(--fondo-base);
+	color: var(--tinta);
+	font-family: 'Nunito Variable', system-ui, sans-serif;
+	font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+	line-height: 1.6;
+	-webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2,
+h3 {
+	font-family: 'Fredoka Variable', system-ui, sans-serif;
+	font-weight: 600;
+	line-height: 1.05;
+	margin: 0;
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+a {
+	color: inherit;
+}
+
+:focus-visible {
+	outline: 3px solid var(--cielo);
+	outline-offset: 3px;
+	border-radius: 6px;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* =========================================================================
+   KEYFRAMES
+   Solo movimiento CONTINUO, ligado al tiempo: el vaivén de la mascota, el
+   parpadeo, el rebote.
+
+   Lo que estaba atado al scroll (reveals, parallax, stagger por posición) se
+   fue con el scroll. Ahora la animación de entrada la maneja GSAP
+   (`entrarPaso` en lib/animacion.ts) porque necesita ser dirigida por el
+   cambio de paso y saber de qué lado viene.
+
+   Estas de acá se apagan solas con prefers-reduced-motion: los componentes las
+   declaran dentro de un `@media (prefers-reduced-motion: no-preference)`, así
+   que el usuario que las pidió apagadas no las ve nunca declaradas.
+   ========================================================================= */
+@keyframes wiggle {
+	0%,
+	100% {
+		transform: rotate(-2deg);
+	}
+	25% {
+		transform: rotate(3deg);
+	}
+	75% {
+		transform: rotate(-1deg);
+	}
+}
+
+@keyframes wag {
+	0%,
+	100% {
+		transform: rotate(-12deg);
+	}
+	50% {
+		transform: rotate(16deg);
+	}
+}
+
+@keyframes blink {
+	0%,
+	48%,
+	52%,
+	100% {
+		transform: scaleY(1);
+	}
+	50% {
+		transform: scaleY(0.1);
+	}
+}
+
+@keyframes bounce-soft {
+	0%,
+	100% {
+		transform: translateY(0) scale(1, 1);
+	}
+	40% {
+		transform: translateY(-10px) scale(1.02, 0.98);
+	}
+	60% {
+		transform: translateY(4px) scale(0.98, 1.02);
+	}
+}
+
+/* Resplandor y "pop" del mensaje de rechazo y de la confirmación. */
+@keyframes pop {
+	0% {
+		transform: scale(0.6);
+		opacity: 0;
+	}
+	70% {
+		transform: scale(1.08);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+/* =========================================================================
+   RED DE SEGURIDAD PARA prefers-reduced-motion
+
+   Los keyframes de arriba son declarados pero NO se activan solos: cada
+   componente los envuelve en su propio
+   `@media (prefers-reduced-motion: no-preference)`. Eso obliga a que cada
+   animación nueva se piense en si se respeta la preferencia, que es
+   exactamente el punto.
+
+   Esta regla existe para el caso contrario: que alguien escriba `animation:` en
+   un selector y se le olvide el guard. Con `!important` y una duración de
+   0.01ms la animación ocurre pero no se ve ni se nota, y el elemento queda en su
+   estado final — que es el correcto. `scroll-behavior: auto` es lo mismo para
+   el smooth scroll global.
+
+   ⚠️ No toca `transition`: un `transition` corto (los hovers de los botones) no
+   es movimiento que moleste, y matarlos deja los botones sin feedback.
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

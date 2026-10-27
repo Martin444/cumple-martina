@@ -1,0 +1,23 @@
+# Netlify config para SvelteKit + adapter-netlify.
+#
+# El adapter ya produce el output correcto sin este archivo, pero declararlo
+# explícito evita depender de la autodetección de Netlify y del publish dir.
+
+[build]
+  command = "npm run build"
+  publish = ".netlify"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Variables de Firebase: son PÚBLICAS (van con prefijo PUBLIC_ y sin secreto).
+# Configurarlas en el sitio de Netlify (Site settings → Environment variables),
+# NO acá. Si faltan, el build usa los centinela PONER-... del .env y la app
+# muestra el aviso "falta configurar Firebase" en vez de perder RSVPs.
+#
+#   PUBLIC_FIREBASE_API_KEY
+#   PUBLIC_FIREBASE_AUTH_DOMAIN
+#   PUBLIC_FIREBASE_PROJECT_ID
+#   PUBLIC_FIREBASE_STORAGE_BUCKET
+#   PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+#   PUBLIC_FIREBASE_APP_ID
