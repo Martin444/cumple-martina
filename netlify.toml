@@ -21,3 +21,6 @@ PUBLIC_FIREBASE_PROJECT_ID = "cumple-marti"
 PUBLIC_FIREBASE_STORAGE_BUCKET = "cumple-marti.firebasestorage.app"
 PUBLIC_FIREBASE_MESSAGING_SENDER_ID = "548754900385"
 PUBLIC_FIREBASE_APP_ID = "1:548754900385:web:e5bba9b6f45d86131fb7e0"
+# Obligatoria para el build: $env/static/public exige que exista aunque en
+# prod nunca se use (solo aplica con import.meta.env.DEV).
+PUBLIC_USE_FIREBASE_EMULATORS = "false"
