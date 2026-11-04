@@ -11,22 +11,22 @@ export const evento = {
 	/** `null` = todavía no está confirmado. La UI muestra "Próximamente". */
 	fecha: {
 		/** ISO completo, o `null` si no está confirmado. */
-		iso: null as string | null,
+		iso: '2026-11-08T17:00:00-03:00' as string | null,
 		/** Textos ya formateados, o `null` para que la UI use el fallback. */
-		dia: null as string | null,
-		hora: null as string | null
+		dia: 'Domingo 8 de noviembre' as string | null,
+		hora: 'De 17 a 20 hs' as string | null
 	},
 
 	lugar: {
-		nombre: null as string | null,
-		direccion: null as string | null,
+		nombre: 'Finca de Yoyo' as string | null,
+		direccion: 'RN 34 km 1435, a la entrada de Tartagal (junto al hotel La Wet), Salta' as string | null,
 		/**
 		 * Placeholder-free: "Nombre, Calle 123, Ciudad". Se usa para el botón de
 		 * Google Maps cuando todavía no hay coordenadas.
 		 */
-		consulta: null as string | null,
+		consulta: 'Finca de Yoyo, RN 34 km 1435, Tartagal, Salta, Argentina' as string | null,
 		/** "lat,lng" o `null`. Si está, tiene prioridad sobre `consulta`. */
-		coordenadas: null as string | null
+		coordenadas: '-22.4953467,-63.7964475' as string | null
 	},
 
 	arte: {

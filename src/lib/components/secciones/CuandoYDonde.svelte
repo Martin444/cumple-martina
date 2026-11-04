@@ -44,11 +44,16 @@
 		una línea en el config y el botón funciona solo.
 	-->
 	<div class="mapa">
-		<p class="mapa-texto">El lugar todavía se está confirmando</p>
+		{#if hayLugar}
+			<p class="mapa-texto">{evento.lugar.nombre}</p>
+			<p class="mapa-nota">{evento.lugar.direccion}</p>
+		{:else}
+			<p class="mapa-texto">{tbc.lugar}</p>
+			<p class="mapa-nota">Te lo actualizamos en cuanto esté confirmado.</p>
+		{/if}
 		<Boton variante="fantasia" href={urlComoLlegar}>
 			<span class="pin" aria-hidden="true">📍</span> Cómo llegar
 		</Boton>
-		<p class="mapa-nota">Te lo actualizamos en cuanto esté confirmado.</p>
 	</div>
 
 	<div class="acciones">
