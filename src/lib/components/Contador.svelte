@@ -96,9 +96,9 @@
 	}
 
 	.etiqueta {
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
+		font-family: var(--font-display);
 		font-size: 1.15rem;
-		font-weight: 600;
+		font-weight: 400;
 	}
 
 	.emoji {
@@ -149,9 +149,9 @@
 	.numero {
 		min-width: 2.2ch;
 		text-align: center;
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
+		font-family: var(--font-display);
 		font-size: 1.7rem;
-		font-weight: 600;
+		font-weight: 400;
 		font-variant-numeric: tabular-nums;
 	}
 

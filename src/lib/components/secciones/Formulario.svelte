@@ -216,8 +216,8 @@
 	}
 
 	label {
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
-		font-weight: 600;
+		font-family: var(--font-display);
+		font-weight: 400;
 		font-size: 1.1rem;
 	}
 

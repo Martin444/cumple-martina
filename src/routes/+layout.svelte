@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '@fontsource-variable/fredoka';
+	import '@fontsource/luckiest-guy';
 	import '@fontsource-variable/nunito';
 	import '../app.css';
 

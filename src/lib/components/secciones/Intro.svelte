@@ -7,8 +7,6 @@
 </script>
 
 <Seccion tono="crema">
-	<p class="arranque">Van a celebrar algo muy importante</p>
-
 	<h1 class="titulo">
 		Vamos a celebrar el cumpleaños de
 		<span class="nombre">{evento.nombre}</span>
@@ -42,13 +40,6 @@
 </Seccion>
 
 <style>
-	.arranque {
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
-		font-size: clamp(0.95rem, 2.2vw, 1.15rem);
-		color: var(--tinta-suave);
-		letter-spacing: 0.02em;
-	}
-
 	.titulo {
 		font-size: clamp(2.2rem, 8vw, 5rem);
 		max-width: 18ch;

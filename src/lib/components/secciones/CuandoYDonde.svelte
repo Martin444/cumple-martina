@@ -103,9 +103,9 @@
 	}
 
 	.valor {
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
+		font-family: var(--font-display);
 		font-size: clamp(1rem, 3vw, 1.25rem);
-		font-weight: 600;
+		font-weight: 400;
 	}
 
 	.tbc {
@@ -132,7 +132,7 @@
 	}
 
 	.mapa-texto {
-		font-family: 'Fredoka Variable', system-ui, sans-serif;
+		font-family: var(--font-display);
 		font-size: clamp(1rem, 3vw, 1.2rem);
 	}
 

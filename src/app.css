@@ -1,5 +1,6 @@
 /* Las fuentes se importan en src/routes/+layout.svelte (vía @fontsource), no
-   acá: importarlas en los dos lugares las descarga dos veces. */
+   acá: importarlas en los dos lugares las descarga dos veces.
+   Ahora usamos Luckiest Guy para títulos/acentos y Nunito Variable para el cuerpo. */
 
 /* =========================================================================
    TOKENS
@@ -64,6 +65,10 @@
 
 	--ancho: 68rem;
 
+	/* Tipografía. */
+	--font-display: 'Luckiest Guy', system-ui, sans-serif;
+	--font-body: 'Nunito Variable', system-ui, sans-serif;
+
 	/*
 		Alto reservado para la barra de navegación del deck. `Seccion.svelte` lo
 		usa de padding-block-end para que el último elemento de cada paso no
@@ -116,7 +121,7 @@ body {
 body {
 	background: var(--fondo-base);
 	color: var(--tinta);
-	font-family: 'Nunito Variable', system-ui, sans-serif;
+	font-family: var(--font-body);
 	font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
 	line-height: 1.6;
 	-webkit-text-size-adjust: 100%;
@@ -125,8 +130,8 @@ body {
 h1,
 h2,
 h3 {
-	font-family: 'Fredoka Variable', system-ui, sans-serif;
-	font-weight: 600;
+	font-family: var(--font-display);
+	font-weight: 400;
 	line-height: 1.05;
 	margin: 0;
 	text-wrap: balance;
