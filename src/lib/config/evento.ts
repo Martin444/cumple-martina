@@ -19,7 +19,8 @@ export const evento = {
 
 	lugar: {
 		nombre: 'Finca de Yoyo' as string | null,
-		direccion: 'RN 34 km 1435, a la entrada de Tartagal (junto al hotel La Wet), Salta' as string | null,
+		direccion: 'RN 34 km 1435, a la entrada de Tartagal (junto al hotel La Wet), Salta' as
+			string | null,
 		/**
 		 * Placeholder-free: "Nombre, Calle 123, Ciudad". Se usa para el botón de
 		 * Google Maps cuando todavía no hay coordenadas.

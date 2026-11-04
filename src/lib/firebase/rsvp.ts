@@ -152,5 +152,3 @@ async function yaRespondio(uid: string): Promise<boolean> {
 	const snap = await getDoc(doc(getDb(), rsvpPath(uid)));
 	return snap.exists();
 }
-
-

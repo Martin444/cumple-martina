@@ -25,11 +25,13 @@
 		El `href` de acá siempre es una URL ABSOLUTA externa (hoy, la de intents
 		de Google Maps desde `config/evento.ts`). `resolve()` es para rutas
 		internas de SvelteKit: aplicarlo a una URL absoluta la rompe. Por eso la
-		regla no aplica acá, y el `target`/`rel` de abajo tampoco hacen falta
-		porque no vamos a otra pestaña.
+		regla no aplica acá.
+		`target="_blank"` es clave: el invitado abre el mapa pero la invitación
+		sigue viva en su pestaña, con el formulario sin perder. Sin esto, la
+		navegación al mapa reemplaza la página y se pierde todo lo completado.
 	-->
 	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-	<a {href} class="boton {variante} {tamano}">
+	<a {href} class="boton {variante} {tamano}" target="_blank" rel="noopener noreferrer">
 		{@render children()}
 	</a>
 {:else}

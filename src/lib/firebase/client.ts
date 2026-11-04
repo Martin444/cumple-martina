@@ -106,4 +106,3 @@ export function firebaseConfigurado(): boolean {
 		!PUBLIC_FIREBASE_APP_ID.startsWith('PONER-')
 	);
 }
-

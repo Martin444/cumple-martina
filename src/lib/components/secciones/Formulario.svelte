@@ -303,4 +303,3 @@
 		max-width: 36ch;
 	}
 </style>
-
